@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 //here we import the useState hook so we can manage state.
 //hooks can only be used in function components.
+//useEffect to save state, to for example local storage.
 import TodoList from "./components/TodoList";
 import { v4 as uuidv4 } from "uuid";
 function App() {
@@ -8,6 +9,20 @@ function App() {
   //the argument in useState is our default state, can be an empty array of todos, or multiple hardcoded ones,...
 
   const todoNameRef = useRef();
+  const LOCAL_STORAGE = "todoApp.todos";
+
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE));
+    if (storedTodos) {
+      setTodos(storedTodos);
+    }
+  }, []);
+  //this one will load our todos, and only once (empty array never changes)
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE, JSON.stringify(todos));
+  }, [todos]);
+  //This useEffect saves our todos to localstorage if our todos array changes, but doesnt show it. we need another useEffect for that.
 
   function handleAddTodo(e) {
     const name = todoNameRef.current.value;
